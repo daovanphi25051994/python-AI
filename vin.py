@@ -3,7 +3,6 @@ from datetime import date, datetime
 import requests, json  # For weather
 import pyttsx3
 
-
 # Init
 robot_ear = speech_recognition.Recognizer()
 robot_mouth = pyttsx3.init()
