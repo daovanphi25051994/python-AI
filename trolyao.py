@@ -30,7 +30,7 @@ def say_vietnamese(text):
 def weather(city_name):
     api_key = "1520d85992106dbe0c323304bd31c0e8"
     base_url = "http://api.openweathermap.org/data/2.5/weather?"
-    complete_url = base_url + "q=" + city_name + "&appid=" + api_key
+    complete_url = base_url + "q=" + city_name.lower() + "&appid=" + api_key
     response = requests.get(complete_url)
     result = response.json()
     if result["cod"] != "404":
@@ -39,7 +39,7 @@ def weather(city_name):
         city = result["name"]
         robot_brain = "City: " + city + ", weather: " + weather + ", temperature: " + str(current_temperature) + " celsius"
     else:
-        robot_brain = "Tên thành phố không đúng"
+        robot_brain = "name city invalid"
     return robot_brain
 
 # Robot listening from mic
@@ -50,35 +50,39 @@ def listen_mic():
         audio = robot_ear.listen(mic)
     try: 
         you = robot_ear.recognize_google(audio, language='vi-VN')
+        you =  you.lower()
+        print("you: " + you)
+        return you
     except: 
-        you = "gdsGSD"
-    print("you: " + you)
+        you = ""
+        print("you: " + you)
+        return you
 
-# AI
+    # AI
 while True:
-    listen_mic()
-    if "Xin chào" in you:
+    you = listen_mic()
+    if "xin chào" in you:
         robot_brain = "Chào phi, bạn có khỏe không"
     elif "hôm nay" in you:
         robot_brain = today.strftime("%B-%d-%Y")
-        # robot_brain = translate(robot_brain)
+        robot_brain = translate(robot_brain)
     elif "giờ" in you:
         robot_brain = now.strftime("%H hours %M minutes")
-        # robot_brain = translate(robot_brain)
+        robot_brain = translate(robot_brain)
     elif "nhiệt độ" in you:
         robot_brain = "Thành phố gì ạ"
         print("Robot_brain: " + robot_brain)
         say_vietnamese(robot_brain)
-        listen_mic()
+        you =  listen_mic()
         print("you: " + you)
         robot_brain =  translate(weather(you))
-    elif "tạm biệt" in you:
+    elif "bye" in you:
         robot_brain = "Hẹn gặp lại"
         print("Robot_brain: " + robot_brain)
         say_vietnamese(robot_brain)
         break
     else:
-        robot_brain = "Cảm ơn bạn"
+        robot_brain = "Có việc gì thế"
     print("Robot_brain: " + robot_brain)
     # Robot speak
     say_vietnamese(robot_brain)
